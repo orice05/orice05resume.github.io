@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Exploration Project</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <header class="bg-blue-600 text-white p-4 shadow-md">
+        <nav class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Orion's Resume</h1>
+            <ul class="flex space-x-4">
+                <li><a href="project1.html" class="hover:text-blue-200 transition duration-300 ease-in-out font-semibold">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="flex-grow container mx-auto p-8">
+        <section class="bg-white p-8 rounded-lg shadow-lg mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">Exploring Datasets Using Pandas</h2>
+            <p class="text-gray-700 mb-6 text-center">This page displays the content of the Jupyter Notebook for the Data Exploration and Visualization project.</p>
+
+            <div class="markdown-content">
+                <h1>Project 7: Data Exploration and Visualization</h1>
+                <h3>Overview</h3>
+                <p>In this project, you will apply data exploration and visualization techniques to a real-world dataset of your choice. You'll practice using pandas for data analysis and create meaningful visualizations to gain insights from your data. This project builds on your Python programming skills while introducing you to the exciting world of data science.</p>
+                <p>In <a href="https://colab.research.google.com/drive/15QvSh0csZaCU-OuuPIfpWx5wLDDjmqK4?usp=sharing">Lab7</a>, you explore the titanic dataset and you should use it as a sample and pick a dataset of your interest to do a similar data exploration and visualization.</p>
+                <h3>Project Objectives</h3>
+                <ul>
+                    <li>Find and select a dataset from a real-world data source</li>
+                    <li>Formulate a clear inquiry question based on your chosen dataset</li>
+                    <li>Perform exploratory data analysis using pandas functions</li>
+                    <li>Create at least two meaningful data visualizations</li>
+                    <li>Analyze your findings and answer your inquiry question</li>
+                    <li>Reflect on the insights gained through data exploration</li>
+                </ul>
+                <h3>Data Sources</h3>
+                <p>You can choose from various online data sources such as:</p>
+                <ul>
+                    <li><a href="https://www.kaggle.com/datasets">Kaggle</a> - Wide variety of datasets</li>
+                    <li><a href="https://www.data.gov/">data.gov</a> - U.S. government data</li>
+                    <li><a href="https://ourworldindata.org/">Our World in Data</a> - Global development data</li>
+                    <li><a href="https://github.com/datasets">GitHub</a> - Curated datasets</li>
+                    <li><a href="https://datasetsearch.research.google.com/">Google Dataset Search</a> - Search for datasets</li>
+                    <li>Or any other reliable data source you find interesting</li>
+                </ul>
+                <h2>Part 1: Dataset Selection and Initial Exploration</h2>
+                <h4>TODO Tasks:</h4>
+                <p>1. Select Your Dataset: Choose a dataset that interests you. Make sure it has at least 100 rows and multiple columns with different data types (e.g., numerical, categorical, dates).</p>
+                <p>Please create either text or code cells in between the TODO tasks to do the work.</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code>
+ev_df = pd.read_csv("https://data.wa.gov/api/views/f6w7-q2d2/rows.csv?accessType=DOWNLOAD")
+print('Loaded EV')
+                </code></pre>
+                <div class="output-block">
+                    <pre><code>Loaded EV</code></pre>
+                </div>
+            </div>
+
+            <div class="markdown-content">
+                <p>2. Import Libraries: Import the necessary libraries (pandas, matplotlib, seaborn) at the beginning of your notebook by creating code cells below this text cell.</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code>
+!pip -q install numpy>=2
+!pip -q install pandas==2.2.2
+
+import numpy as np
+import pandas as pd
+
+print("Successfully imported numpy, pandas")
+                </code></pre>
+                <div class="output-block">
+                    <pre><code>Successfully imported numpy, pandas</code></pre>
+                </div>
+            </div>
+
+            <div class="markdown-content">
+                <p>3. Load Your Data: Load your chosen dataset using pandas and save it to a pandas dataframe. Please create a code cell below this text cell to do it.</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code>
+print(ev_df.shape
+                </code></pre>
+                <div class="output-block">
+                    <pre><code>(246137, 17)</code></pre>
+                </div>
+            </div>
+
+            <div class="markdown-content">
+                <p>4. Data Summary: Use the following functions to do initial exploration your dataset:</p>
+                <ul>
+                    <li>info() - Display information about the dataset structure</li>
+                    <li>describe() - Show statistical summary of numerical columns</li>
+                    <li>head() - Display the first 5 rows (df.head())</li>
+                    <li>shape - Show the dimensions of the dataset (e.g. df.shape)</li>
+                    <li>columns - Get the column names (e.g. df.columns)</li>
+                </ul>
+                <p>You may use 5 code cells below this text cell to accomplish it.</p>
+            </div>
+
+            <div class="markdown-content">
+                <p>In the US there are 246137 Electric Vehicles. In the states the 5 cities with the largest EV population are Seattle, Bellevue, Vancouver, Redmond and Bothell. The most popular EV is the testla Model Y.</p>
+            </div>
+
+            <div class="code-block">
+                <pre><code>
+ev_df.columns
+                </code></pre>
+                <div class="output-block">
+                    <pre><code>
+Index(['VIN (1-10)', 'County', 'City', 'State', 'Postal Code', 'Model Year',
+       'Make', 'Model', 'Electric Vehicle Type',
+       'Clean Alternative Fuel Vehicle (CAFV) Eligibility', 'Electric Range',
+       'Base MSRP', 'Legislative District', 'DOL Vehicle ID',
+       'Vehicle Location', 'Electric Utility', '2020 Census Tract'],
+      dtype='object')
+                    </code></pre>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <pre><code>
+print(ev_df.shape)
+                </code></pre>
+                <div class="output-block">
+                    <pre><code>(246137, 17)</code></pre>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <pre><code>
+ev_df.head()
+                </code></pre>
+                <div class="output-block">
+                    <pre><code>
+   VIN (1-10)    County      City State  Postal Code  Model Year   Make  \
+0  5YJ3E1EB6K      King   Seattle    WA      98178.0        2019  TESLA
+1  5YJYGAEE5M    Yakima     Selah    WA      98942.0        2021  TESLA
+2  5YJSA1E65N    Yakima   Granger    WA      98932.0        2022  TESLA
+3  5YJ3E1EBXN      King  Bellevue    WA      98004.0        2022  TESLA
+4  JM3KKEHA8S  Thurston      Yelm    WA      98597.0        2025  MAZDA
+
+     Model                   Electric Vehicle Type  \
+0  MODEL 3          Battery Electric Vehicle (BEV)
+1  MODEL Y          Battery Electric Vehicle (BEV)
+2  MODEL S          Battery Electric Vehicle (BEV)
+3  MODEL 3          Battery Electric Vehicle (BEV)
+4    CX-90  Plug-in Hybrid Electric Vehicle (PHEV)
+
+   Clean Alternative Fuel Vehicle (CAFV) Eligibility  Electric Range  \
+0            Clean Alternative Fuel Vehicle Eligible           220.0
+1  Eligibility unknown as battery range has not b...             0.0
+2  Eligibility unknown as battery range has not b...             0.0
+3  Eligibility unknown as battery range has not b...             0.0
+4              Not eligible due to low battery range            26.0
+
+   Base MSRP  Legislative District  DOL Vehicle ID  \
+0        0.0                  37.0       101250425
+1        0.0                  15.0       224162858
+2        0.0                  15.0       187279214
+3        0.0                  41.0       219428079
+4        0.0                   2.0       277791643
+
+              Vehicle Location                               Electric Utility  \
+0  POINT (-122.23825 47.49461)   CITY OF SEATTLE - (WA)|CITY OF TACOMA - (WA)
+1  POINT (-120.53145 46.65405)                                     PACIFICORP
+2   POINT (-120.1871 46.33949)                                     PACIFICORP
+3   POINT (-122.1872 47.61001)  PUGET SOUND ENERGY INC||CITY OF TACOMA - (WA)
+4  POINT (-122.60735 46.94239)                         PUGET SOUND ENERGY INC
+
+   2020 Census Tract
+0       5.303301e+10
+1       5.307700e+10
+2       5.307700e+10
+3       5.303302e+10
+4       5.306701e+10
+                    </code></pre>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <pre><code>
+ev_df.info()
+
+print(f"Total number of EVs in the dataset: {ev_df.shape[0]}")
+
+if 'Make' in ev_df.columns and 'Model' in ev_df.columns:
+  popular_vehicles = ev_df.groupby(['Make', 'Model']).size().sort_values(ascending=False)
+  print("\nMost popular EV makes and models (Top 10):")
+  print(popular_vehicles.head(10))
+else:
+  print("\n'Make' or 'Model' column not found in the DataFrame. Cannot determine most popular vehicles.")
+
+
+if 'City' in ev_df.columns:
+  cities_with_most_evs = ev_df['City'].value_counts().sort_values(ascending=False)
+  print("\nCities with the largest number of EVs (Top 10):")
+  print(cities_with_most_evs.head(10))
+else:
+  print("\n'City' column not found in the DataFrame. Cannot determine cities with most EVs.")
+                </code></pre>
+                <div class="output-block">
+                    <pre><code>
+&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 246137 entries, 0 to 246136
+Data columns (total 17 columns):
+ #   Column                                             Non-Null Count   Dtype
+---  ------                                             --------------   -----
+ 0   VIN (1-10)                                         246137 non-null  object
+ 1   County                                             246133 non-null  object
+ 2   City                                               246133 non-null  object
+ 3   State                                              246137 non-null  object
+ 4   Postal Code                                        246133 non-null  float64
+ 5   Model Year                                         246137 non-null  int64
+ 6   Make                                               246137 non-null  object
+ 7   Model                                              246137 non-null  object
+ 8   Electric Vehicle Type                              246137 non-null  object
+ 9   Clean Alternative Fuel Vehicle (CAFV) Eligibility  246137 non-null  object
+ 10  Electric Range                                     246120 non-null  float64
+ 11  Base MSRP                                          246120 non-null  float64
+ 12  Legislative District                               245597 non-null  float64
+ 13  DOL Vehicle ID                                     246137 non-null  int64
+ 14  Vehicle Location                                   246126 non-null  object
+ 15  Electric Utility                                   246133 non-null  object
+ 16  2020 Census Tract                                  246133 non-null  float64
+dtypes: float64(5), int64(2), object(10)
+memory usage: 31.9+ MB
+Total number of EVs in the dataset: 246137
+
+Most popular EV makes and models (Top 10):
+Make        Model
+TESLA       MODEL Y           51050
+            MODEL 3           37108
+NISSAN      LEAF              13949
+TESLA       MODEL S            7884
+CHEVROLET   BOLT EV            7517
+TESLA       MODEL X            6604
+FORD        MUSTANG MACH-E     5333
+VOLKSWAGEN  ID.4               5089
+JEEP        WRANGLER           4989
+CHEVROLET   VOLT               4701
+dtype: int64
+
+Cities with the largest number of EVs (Top 10):
+City
+Seattle      38996
+Bellevue     11988
+Vancouver     9003
+Redmond       8515
+Bothell       8055
+Kirkland      6998
+Sammamish     6906
+Renton        6758
+Olympia       5855
+Tacoma        5426
+Name: count, dtype: int64
+                    </code></pre>
+                </div>
+            </div>
+
+            <div class="markdown-content">
+                <p>5. Inquiry Question: Write a clear, specific question that you want to answer using your dataset by creating a text cell below and <strong>write the question in bold please.</strong></p>
+                <p>For example:</p>
+                <ul>
+                    <li>"How has the average temperature changed in major cities over the past decade?"</li>
+                    <li>"What factors are most strongly correlated with housing prices?"</li>
+                    <li>"Is there a relationship between education level and income?"</li>
+                </ul>
+            </div>
+
+            <div class="markdown-content">
+                <p><strong>In the United states, which city has the highest EV population and what is the likelyness that the EV is a tesla. </strong></p>
+            </div>
+
+            <div class="markdown-content">
+                <h2>Part 2: Data Visualization and Analysis</h2>
+                <h4>TODO Tasks:</h4>
+                <p>1. Data Cleaning (if necessary): Check for and handle any missing values, duplicates, or data quality issues.</p>
+                <p><strong>NOTE: This could be a daunting task even for seasoned data scientists. My suggestion is to use a dataset that is already clean if you can for the purpose of completing this assignment in a week.</strong></p>
+                <p>Examples:</p>
+                <ul>
+                    <li>Checking for missing values: df.isnull().sum()</li>
+                    <li>Dropping rows with any missing values: df.dropna(inplace=True)</li>
+                    <li>Dropping columns with all missing values: df.dropna(axis=1, how='all', inplace=True)</li>
+                    <li>Removing duplicate row: df.drop_duplicates(inplace=True)</li>
+                </ul>
+                <p>2. Create Visualizations: Create at least 2 different types of visualizations that help answer your research question. Choose from:</p>
+                <ul>
+                    <li>Bar charts</li>
+                    <li>Line plots</li>
+                    <li>Scatter plots</li>
+                    <li>Histograms</li>
+                    <li>Box plots</li>
+                    <li>Heatmaps</li>
+                    <li>Any other appropriate visualization</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+                <pre><code>
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+top_cities = cities_with_most_evs.head(5).index
+
+
+top_cities_df = ev_df[ev_df['City'].isin(top_cities)]
+
+
+city_ev_counts = top_cities_df['City'].value_counts().sort_values(ascending=False)
+
+
+plt.figure(figsize=(10, 6))
+sns.barplot(x=city_ev_counts.index, y=city_ev_counts.values, palette='viridis')
+plt.title('Number of EVs in Top 5 Cities')
+plt.xlabel('City')
+plt.ylabel('Number of EVs')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
+
+ev_df['Vehicle Type'] = ev_df['Make'].apply(lambda x: 'Tesla' if x == 'TESLA' else 'Other EVs')
+
+
+vehicle_type_counts = ev_df['Vehicle Type'].value_counts()
+
+
+plt.figure(figsize=(8, 5))
+sns.barplot(x=vehicle_type_counts.index, y=vehicle_type_counts.values, palette='coolwarm')
+plt.title('Number of Tesla vs. Other EVs')
+plt.xlabel('Vehicle Type')
+plt.ylabel('Number of Vehicles')
+plt.show()
+                </code></pre>
+                <div class="output-block">
+                    <pre><code>
+&lt;ipython-input-27-4263acf535ff&gt;:17: FutureWarning:
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `x` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.barplot(x=city_ev_counts.index, y=city_ev_counts.values, palette='viridis')
+&lt;Figure size 1000x600 with 1 Axes&gt;
+                    </code></pre>
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA90AAAJOCAYAAACqS2TfAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjEwLjAsIGh0dHBzOi8vbWF0cGxvdGxpYi5vcmcvlHJYcgAAAAlwSFlzAAAPYQAAD2EBqD+naQAAd/1JRU5ErkJggg==" alt="Bar chart of EVs in Top 5 Cities">
+                    <pre><code>
+&lt;ipython-input-27-4263acf535ff&gt;:32: FutureWarning:
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `x` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.barplot(x=vehicle_type_counts.index, y=vehicle_type_counts.values, palette='coolwarm')
+&lt;Figure size 800x500 with 1 Axes&gt;
+                    </code></pre>
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAtEAAAHWCAYAAACxJNUiAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjEwLjAsIGh0dHBzOi8vbWF0cGxvdGxpYi5vcmcvlHJYcgAAAAlwSFlzAAAPYQAAD2EBqD+naQAAVG1JRU5ErkJggg==" alt="Bar chart of Tesla vs. Other EVs">
+                </div>
+            </div>
+
+            <div class="code-block">
+                <pre><code>
+# prompt: create a code to print the likelyness that an EV in seattle would be a tesla given the data above
+
+# Filter the DataFrame to include only EVs in Seattle
+seattle_evs = ev_df[ev_df['City'] == 'Seattle']
+
+# Calculate the total number of EVs in Seattle
+total_seattle_evs = seattle_evs.shape[0]
+
+# Filter the Seattle EVs to include only Teslas
+seattle_teslas = seattle_evs[seattle_evs['Make'] == 'TESLA']
+
+# Calculate the number of Teslas in Seattle
+num_seattle_teslas = seattle_teslas.shape[0]
+
+# Calculate the likelihood (proportion) of an EV being a Tesla in Seattle
+if total_seattle_evs > 0:
+  likelihood_tesla_seattle = num_seattle_teslas / total_seattle_evs
+  print(f"\nTotal EVs in Seattle: {total_seattle_evs}")
+  print(f"Number of Teslas in Seattle: {num_seattle_teslas}")
+  print(f"Likelihood of an EV being a Tesla in Seattle: {likelihood_tesla_seattle:.4f}")
+else:
+  print("No EVs found in Seattle in the dataset.")
+
+# You can also visualize this likelihood if you want
+if total_seattle_evs > 0:
+    tesla_vs_other_seattle = pd.Series([num_seattle_teslas, total_seattle_evs - num_seattle_teslas], index=['Tesla', 'Other EVs'])
+
+    plt.figure(figsize=(6, 6))
+    plt.pie(tesla_vs_other_seattle, labels=tesla_vs_other_seattle.index, autopct='%1.1f%%', startangle=90, colors=['#FF9900', '#3366CC'])
+    plt.title('Proportion of Tesla vs. Other EVs in Seattle')
+    plt.show()
+                </code></pre>
+                <div class="output-block">
+                    <pre><code>
+Total EVs in Seattle: 38996
+Number of Teslas in Seattle: 13920
+Likelihood of an EV being a Tesla in Seattle: 0.3570
+                    </code></pre>
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfcAAAH4CAYAAABXI6TyAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjEwLjAsIGh0dHBzOi8vbWF0cGxvdGxpYi5vcmcvlHJYcgAAAAlwSFlzAAAPYQAAD2EBqD+naQAAUiJJRU5ErkJggg==" alt="Pie chart of Tesla vs. Other EVs in Seattle">
+                </div>
+            </div>
+
+            <div class="markdown-content">
+                <p>Please create code cells below this to create your visualizations.</p>
+                <p>4. Analysis: Write 1-2 paragraphs discussing:</p>
+                <ul>
+                    <li>Whether your research question can be answered with the available data</li>
+                    <li>What insights you discovered through your visualizations</li>
+                    <li>Any unexpected or interesting findings</li>
+                    <li>Limitations of your analysis</li>
+                    <li>Suggestions for further investigation</li>
+                </ul>
+                <p>Please create a text cell below this cell to write your analysis.</p>
+                <h1>Analysis</h1>
+                <p>According to the data set, the likelyness that an EV in Seattle is a tesla is 35.7%. In this scenario I was able to answer my research question. However the accuracy of this assessment could be faulted as this dataset is outdated. Through my visualizations I realized that teslas are less prominent than I thought, however there are much more other EV companies so the flaw could have been in my research question. Further investigation should address a different question.</p>
+                <h2>Submission Requirements</h2>
+                <h2>NOTE: If you use a local dataset, you MUST submit the dataset along with your notebook to get credit.</h2>
+                <ul>
+                    <li>Download your notebook as CS110_Project7.ipynb</li>
+                    <li>Ensure all TODO tasks are completed</li>
+                    <li>Make sure your code runs without errors</li>
+                    <li>Include clear comments explaining your work</li>
+                    <li>Submit the notebook file</li>
+                </ul>
+                <h2>Grading Criteria (4 points)</h2>
+                <ul>
+                    <li>Dataset Selection: Appropriate choice of dataset with sufficient complexity</li>
+                    <li>Inquiry Question: Clear, specific, and answerable with the chosen data</li>
+                    <li>Data Exploration: Proper use of pandas functions for initial analysis</li>
+                    <li>Visualizations: At least 2 clear, well-formatted, and relevant plots</li>
+                    <li>Analysis: Thoughtful interpretation of findings and answer to research question</li>
+                    <li>Code Quality: Clean, commented, and well-organized code</li>
+                </ul>
+                <p>Remember: The goal is not just to create visualizations, but to use them to gain meaningful insights about your data. Think like a data scientist and let your curiosity guide your exploration!</p>
+            </div>
+
+            <div class="text-center mt-8">
+                <a href="project1.html" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out shadow-md">Back to Resume</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white p-4 text-center mt-auto">
+        <p>&copy; 2025 Orion Rice</p>
+    </footer>
+</body>
+</html>

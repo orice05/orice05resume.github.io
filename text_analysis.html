@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Analysis with SpaCy Project</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>Orion's Resume</h1>
+            <ul>
+                <li><a href="project1.html">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h1>Project 6: Advanced Text Analysis with SpaCy</h1>
+            <hr>
+
+            <h3>Overview</h3>
+            <p>
+                In this project, we will enhance our text analysis techniques by applying proper data pre-processing to extract more meaningful information from literary texts. We'll continue working with the first two chapters of "Pride and Prejudice" but will implement advanced text cleaning methods using the SpaCy library to obtain more insightful word frequency results.
+            </p>
+
+            <h3>Project Objectives</h3>
+            <ul>
+                <li>Apply proper text pre-processing techniques to extract meaningful words.</li>
+                <li>Use SpaCy to clean and normalize text data.</li>
+                <li>Identify the 15 most frequently used meaningful words in a text.</li>
+                <li>Analyze how pre-processing affects text analysis results.</li>
+                <li>Apply the same techniques to a text of your choice.</li>
+            </ul>
+
+            <h3>Part 0: Text analysis without text cleaning (Lab6)</h3>
+            <h4>Loading Data</h4>
+            <p>
+                We will fetch the first two chapters of Jane Austen's Pride and Prejudice from
+                <a href="https://www.gutenberg.org/ebooks/1342">Project Gutenberg</a>.
+            </p>
+
+            <h4>Function to fetch data</h4>
+            <pre><code>
+def fetch_text(raw_url):
+  import requests
+  from pathlib import Path
+  import hashlib
+
+  CACHE_DIR = Path("cs_110_content/text_cache")
+  CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
+  def _url_to_filename(url):
+    url_hash = hashlib.sha1(url.encode("utf-8")).hexdigest()[:12]
+    return CACHE_DIR / f"{url_hash}.txt"
+
+  cache_path = _url_to_filename(raw_url)
+
+  SUCCESS_MSG = "✅ Text fetched."
+  FAILURE_MSG = "❌ Failed to fetch text."
+  try:
+    if not cache_path.exists():
+      response = requests.get(raw_url, timeout=10)
+      response.raise_for_status()
+      text_data = response.text
+      cache_path.write_text(text_data, encoding="utf-8")
+    print(SUCCESS_MSG)
+    return cache_path.read_text(encoding="utf-8")
+
+  except Exception as e:
+    print(FAILURE_MSG)
+    print(f"Error: {e}")
+    return ""
+                </code></pre>
+
+            <h4>Save the text in a variable</h4>
+            <pre><code>
+odyssey_URL = "https://www.gutenberg.org/cache/epub/1727/pg1727.txt"
+
+odyssey_text = fetch_text(odyssey_URL)
+                </code></pre>
+            <p>Output:</p>
+            <pre><code>
+✅ Text fetched.
+                </code></pre>
+
+            <h4>Statistics about the data</h4>
+            <pre><code>
+def print_text_stats(text):
+  num_chars = len(text)
+
+  lines = text.splitlines()
+  num_lines = len(lines)
+
+  num_words = 0
+  for line in lines:
+    words_in_line = line.split()
+    num_words_in_line = len(words_in_line)
+    num_words += num_words_in_line
+
+  print(f"Number of characters: {num_chars}")
+  print(f"Number of lines: {num_lines}")
+  print(f"Number of words: {num_words}")
+
+print_text_stats(odyssey_text)
+                </code></pre>
+            <p>Output:</p>
+            <pre><code>
+Number of characters: 698081
+Number of lines: 12242
+Number of words: 132604
+                </code></pre>
+
+            <h4>Word Counts (without preprocessing)</h4>
+            <pre><code>
+def get_word_counts(text):
+  word_counts = {}
+  lines = text.splitlines()
+  for line in lines:
+    words = line.split()
+    for word in words:
+      word = word.lower()
+      if word in word_counts:
+        word_counts[word] += 1
+      else:
+        word_counts[word] = 1
+  return word_counts
+
+word_counts = get_word_counts(odyssey_text)
+print(word_counts)
+                </code></pre>
+            <p>Output (truncated for brevity):</p>
+            <pre><code>
+{'ufeffthe': 1, 'project': 83, 'gutenberg': 25, 'ebook': 8, 'of': 3626, 'the': 7016, 'odyssey': 8, 'this': 602, 'is': 934, 'for': 1368, 'use': 26, 'anyone': 8, 'anywhere': 6, 'in': 1897, 'united': 15, 'states': 11, 'and': 5320, 'most': 86, 'other': 202, 'parts': 7, 'world': 20, 'at': 594, 'no': 383, 'cost': 6, 'with': 1236, 'almost': 7, 'restrictions': 2, 'whatsoever.': 2, 'you': 1675, 'may': 262, 'copy': 9, 'it,': 117, 'give': 139, 'it': 1005, 'away': 121, 'or': 515, 're-use': 2, 'under': 88, 'terms': 24, 'license': 12, 'included': 2, 'online': 4, 'www.gutenberg.org.': 4, 'if': 303, 'are': 576, 'not': 772, 'located': 7, 'states,': 4, 'will': 698, 'have': 858, 'to': 3557, 'check': 6, 'laws': 10, 'country': 49, 'where': 198, 'before': 154, 'using': 9, 'ebook.': 2, 'title:': 1, 'author:': 1, 'homer': 2, 'translator:': 1, 'samuel': 1, 'butler': 5, 'release': 1, 'date:': 1, 'april': 1, '1,': 1, '1999': 1, '[ebook': 1, '#1727]': 1, 'recently': 1, 'updated:': 1, 'december': 1, '2,': 1, '2023': 1, 'language:': 1, 'english': 5, 'credits:': 1, 'jim': 1, 'tinsley': 1, 'david': 1, 'widger': 1, '***': 4, 'start': 7, '[illustration]': 1, 'by': 544, 'rendered': 1, 'into': 285, 'prose': 4, 'those': 91, 'who': 616, 'cannot': 84, 'read': 5, 'original': 9, 'contents': 1, 'preface': 6, 'first': 106, 'edition': 8, 'second': 18, 'book': 64, 'i.': 6, 'ii.': 10, 'iii.': 4, 'iv.': 8, 'v.': 5, 'vi.': 10, 'vii.': 2, 'viii.': 2, 'ix.': 3, 'x.': 3, 'xi.': 5, 'xii.': 4, 'xiii.': 5, 'xiv.': 1, 'xv.': 6, 'xvi.': 1, 'xvii.': 4, 'xviii.': 3, 'xix.': 2, 'xx.': 2, 'xxi.': 1, 'xxii.': 3, 'xxiii.': 4, 'xxiv.': 5, 'footnotes:': 2, 'al': 1, 'professore': 1, 'cav.': 1, 'biagio': 1, 'ingroia,': 1, 'prezioso': 1, 'alleato': 1, 'l’autore': 1, 'riconoscente.': 1, 'translation': 15, 'intended': 6, 'supplement': 1, 'a': 2030, 'work': 76, 'entitled': 1, '“the': 43, 'authoress': 30, 'odyssey”,': 4, 'which': 409, 'i': 1860, 'published': 2, '1897.': 2, 'could': 207, 'whole': 75, '“odyssey”': 36, 'that': 1275, 'without': 119, 'making': 47, 'unwieldy,': 1, 'therefore': 49, 'epitomised': 1, 'my': 816, 'translation,': 7, 'was': 1033, 'already': 34, 'completed': 11, 'now': 217, 'publish': 2, 'full.': 4, 'shall': 214, 'here': 178, 'argue': 2, 'two': 135, 'main': 15, 'points': 6, 'dealt': 6, 'just': 71, 'mentioned;': 1, 'nothing': 81, 'either': 63, 'add': 5, 'to,': 15, 'withdraw': 2, 'from,': 5, 'what': 270, 'there': 364, 'written.': 1, 'question': 13, 'are:': 1, '(1)': 2, 'written': 12, 'entirely': 4, 'at,': 3, 'drawn': 11, 'place': 69, 'called': 52, 'trapani': 6, 'on': 882, 'west': 14, 'coast': 11, 'sicily,': 7, 'alike': 6, 'as': 1291, 'regards': 18, 'phaeacian': 10, 'ithaca': 50, 'scenes;': 1, 'while': 185, 'voyages': 3, 'ulysses,': 112, 'when': 629, 'once': 79, 'he': 1811, 'within': 42, 'easy': 8, 'reach': 32, 'solve': 1, 'themselves': 35, 'periplus': 1, 'island,': 15, 'practically': 2, 'from': 628, 'back': 179, 'trapani,': 5, 'via': 1, 'lipari': 2, 'islands,': 4, 'straits': 5, 'messina,': 2, 'island': 61, 'pantellaria.': 1, '(2)': 2, 'poem': 9, 'very': 170, 'young': 68, 'woman,': 18, 'lived': 13, 'introduced': 2, 'herself': 29, 'her': 567, 'name': 44, 'nausicaa.': 1, 'arguments': 1, 'base': 3, 'these': 155, 'somewhat': 4, 'startling': 1, 'contentions,': 1, 'been': 316, 'prominently': 3, 'repeatedly': 1, 'italian': 4, 'public': 20, 'ever': 71, 'since': 27, 'they': 952, 'appeared': 6, '(without': 1, 'rejoinder)': 2, '“athenaeum”': 1, 'january': 1, '30': 2, 'february': 1, '20,': 1, '1892.': 1, 'both': 144, 'contentions': 1, 'were': 502, 'urged': 1, '(also': 1, 'johnian': 1, '“eagle”': 1, 'lent': 2, 'october': 1, 'same': 57, 'year.': 2, 'should': 237, 'reply': 1, 'has': 327, 'reached': 66, 'me': 655, 'any': 267, 'quarter,': 3, 'knowing': 6, 'how': 161, 'anxiously': 2, 'endeavoured': 1, 'learn': 12, 'existence': 4, 'flaws': 2, 'argument,': 1, 'begin': 12, 'feel': 6, 'some': 278, 'confidence': 2, 'that,': 7, 'did': 255, 'such': 156, 'exist,': 1, 'heard,': 2, 'rate': 11, 'about': 383, 'them,': 142, 'now.': 7, 'without,': 1, 'therefore,': 76, 'moment': 28, 'pretending': 1, 'think': 68, 'scholars': 1, 'generally': 7, 'acquiesce': 1, 'conclusions,': 1, 'act': 4, 'thinking': 18, 'them': 496, 'little': 35, 'likely': 17, 'so': 634, 'gainsay': 2, 'be': 535, 'incumbent': 1, 'upon': 266, 'reply,': 1, 'confine': 1, 'myself': 48, 'translating': 2, 'readers,': 2, 'notes': 1, 'found': 65, 'useful.': 1, 'among': 145, 'would': 378, 'especially': 6, 'call': 26, 'attention': 5, 'one': 520, '465-473': 1, 'lord': 14, 'grimthorpe': 2, 'kindly': 5, 'allowed': 5, 'make': 178, 'public.': 1, 'repeated': 1, 'several': 6, 'illustrations': 5, 'used': 47, 'added': 7, 'hope': 33, 'bring': 68, 'outer': 37, 'court': 28, 'ulysses’': 35, 'house': 228, 'more': 144, 'vividly': 1, 'reader.': 2, 'like': 160, 'explain': 5, 'presence': 9, 'man': 248, 'dog': 6, 'illustration': 3, 'accidental,': 1, 'observed': 2, 'till': 158, 'developed': 1, 'negative.': 1, 'an': 237, 'appendix': 1, 'also': 147, 'reprinted': 1, 'paragraphs': 4, 'explanatory': 1, 'plan': 12, 'house,': 101, 'together': 27, 'itself.': 6, 'reader': 12, 'recommended': 1, 'study': 1, 'attention.': 2, '“iliad”': 18, 'given': 70, 'views': 1, 'principles': 1, 'translator': 1, 'guided,': 1, 'need': 17, 'repeat': 2, 'here,': 42, 'beyond': 16, 'pointing': 2, 'out': 322, 'initial': 4, 'liberty': 2, 'poetry': 2, 'involves': 1, 'continual': 3, 'taking': 30, 'less': 7, 'throughout': 20, 'translation;': 2, 'much': 193, 'right': 60, 'wrong': 10, 'prose,': 1, 'exigencies': 1, 'readable': 2, 'things': 60, 'considered': 4, 'translation.': 1, 'reader,': 1, 'however,': 87, 'see': 249, 'far': 83, 'departed': 2, 'strict': 5, 'construe,': 1, 'print': 3, 'messrs.': 4, 'butcher': 4, 'lang’s': 1, 'sixty': 2, 'lines': 23, '“odyssey.”': 1, 'their': 493, 'runs:': 1, 'tell': 261, 'me,': 137, 'muse,': 4, 'man,': 49, 'ready': 23, 'need,': 2, 'wandered': 3, 'wide,': 3, 'after': 156, 'had': 880, 'sacked': 14, 'sacred': 4, 'citadel': 2, 'troy,': 31, 'many': 133, 'men': 246, 'whose': 43, 'towns': 2, 'saw': 124, 'mind': 53, 'learnt,': 1, 'yea,': 1,...
+                </code></pre>
+
+            <pre><code>
+def print_top_10_frequent_words(text):
+  import operator
+  word_counts = get_word_counts(text)
+  sorted_word_counts = dict(sorted(word_counts.items(), key=operator.itemgetter(1), reverse=True))
+  top_10_words = list(sorted_word_counts.items())[:10] # Get the top 10 words and counts
+  for word, count in top_10_words:
+    print(f"{word}: {count}")
+
+print_top_10_frequent_words(odyssey_text)
+                </code></pre>
+            <p>Output:</p>
+            <pre><code>
+the: 7016
+and: 5320
+of: 3626
+to: 3557
+a: 2030
+in: 1897
+i: 1860
+he: 1811
+you: 1675
+for: 1368
+                </code></pre>
+
+            <h3>Part 1: Analyzing "Pride and Prejudice" with Pre-processing</h3>
+            <p>
+                In our previous lab, we simply counted word frequencies without any sophisticated pre-processing, resulting in common but uninformative words (like "the", "and", "to") dominating our results. You will use SpaCy, a powerful Natural Language Processing library, to perform these operations. SpaCy provides pre-trained models that can handle tokenization, stop word removal, and lemmatization automatically.
+            </p>
+
+            <pre><code>
+# install spacy library
+#!pip install spacy (uncomment it to install)
+                </code></pre>
+
+            <pre><code>
+# bring the spacy library into scope
+import spacy
+                </code></pre>
+
+            <pre><code>
+# Load a SpaCy model
+nlp = spacy.load('en_core_web_sm')
+                </code></pre>
+            <p>Explanation:</p>
+            <ul>
+                <li>`spacy`: This is the spaCy library, a popular and efficient NLP library in Python.</li>
+                <li>`load()`: This function loads a pre-trained NLP model.</li>
+                <li>`'en_core_web_sm'`: This is the name of the small English-language model. It's a lightweight model that includes:
+                    <ul>
+                        <li>Tokenization (splitting text into words, punctuation, etc.)</li>
+                        <li>Part-of-speech (POS) tagging</li>
+                        <li>Named entity recognition (NER) etc.</li>
+                    </ul>
+                </li>
+                <li>`nlp`: This variable now holds the loaded model.</li>
+            </ul>
+
+            <pre><code>
+def word_tokenization_normalization(text):
+
+  text = text.lower() # lowercase
+  doc = nlp(text) # loading text into model
+
+  words_normalized = []
+  for word in doc:
+    if word.text != '\n' \
+    and not word.is_stop \
+    and not word.is_punct \
+    and not word.like_num \
+    and len(word.text.strip()) > 2:
+      word_lemmatized = str(word.lemma_)
+      words_normalized.append(word_lemmatized)
+
+  return words_normalized
+                </code></pre>
+
+            <h4>TODO</h4>
+            <p>1. Use "Explain Code" AI feature to understand what this function, *word_tokenization_normalization(text)* does and write a short summary of about what it does. You may use bullet points. (Please create another text cell under this cell to write the summary.)</p>
+            <p>The word tokenization code aims to categorize words by frequency to find words that are meaningful. It also alters all letters to be lower case so that "Words" and "words" are considered the same. It also discards numbers and symbols.</p>
+
+            <h4>TODO</h4>
+            <p>2. Use this function to get meaningful words from pride_prejudice_text. All you need to do is call the function with the correct input text. (Please create a code cell under this cell to accomplish it.)</p>
+            <pre><code>
+meaningful_words = word_tokenization_normalization(odyssey_text)
+
+print(meaningful_words[:20])
+                </code></pre>
+            <p>Output:</p>
+            <pre><code>
+['ufeffthe', 'project', 'gutenberg', 'ebook', 'odyssey', 'ebook', 'use', 'united', 'states', 'part', 'world', 'cost', 'restriction', 'whatsoever', 'copy', 'away', 'use', 'term', 'project', 'gutenberg']
+                </code></pre>
+
+            <h4>TODO</h4>
+            <p>3. Make a new Code Cell below and use Gemini to create a new function called *create_word_frequency_dict* from the result you got from the previous task. This function should return a word frequency dictionary, meaning this is a fruitful function.</p>
+            <pre><code>
+def create_word_frequency_dict(word_list):
+  """
+  Creates a dictionary of word frequencies from a list of words.
+
+  Args:
+  word_list: A list of words.
+
+  Returns:
+  A dictionary where keys are words and values are their frequencies.
+  """
+  word_frequencies = {}
+  for word in word_list:
+    if word in word_frequencies:
+      word_frequencies[word] += 1
+    else:
+      word_frequencies[word] = 1
+  return word_frequencies
+
+# Call the function with the meaningful_words list
+word_frequencies = create_word_frequency_dict(meaningful_words)
+
+# Optionally, print the resulting dictionary (it might be quite large)
+print(word_frequencies)
+                </code></pre>
+            <p>Output (truncated for brevity):</p>
+            <pre><code>
+{'ufeffthe': 1, 'project': 89, 'gutenberg': 88, 'ebook': 19, 'odyssey': 72, 'use': 30, 'united': 15, 'states': 12, 'part': 11, 'world': 47, 'cost': 11, 'restriction': 2, 'whatsoever': 3, 'copy': 28, 'away': 144, 'term': 24, 'license': 18, 'include': 15, 'online': 4, 'www.gutenberg.org': 5, 'locate': 8, 'check': 17, 'law': 26, 'country': 120, 'title': 1, 'author': 4, 'homer': 4, 'translator': 2, 'samuel': 1, 'butler': 8, 'release': 1, 'date': 5, 'april': 1, 'recently': 2, 'update': 2, 'december': 2, 'language': 6, 'english': 5, 'credit': 4, 'jim': 1, 'tinsley': 1, 'david': 1, 'widger': 1, 'start': 18, 'illustration': 9, 'render': 2, 'prose': 5, 'read': 12, 'original': 9, 'content': 6, 'preface': 6, 'edition': 16, 'book': 82, 'iii': 6, 'vii': 3, 'viii': 4, 'xii': 6, 'xiii': 11, 'xiv': 2, 'xvi': 2, 'xvii': 7, 'xviii': 4, 'xix': 4, 'xxi': 3, 'xxii': 4, 'xxiii': 5, 'xxiv': 6, 'footnote': 4, 'professore': 1, 'cav': 1, 'biagio': 1, 'ingroia': 1, 'prezioso': 1, 'alleato': 1, 'l’autore': 1, 'riconoscente': 1, 'translation': 26, 'intend': 12, 'supplement': 1, 'work': 166, 'entitle': 1, 'authoress': 37, 'publish': 4, 'make': 74, 'unwieldy': 1, 'epitomise': 1, 'complete': 11, 'shall': 217, 'argue': 4, 'main': 17, 'point': 42, 'deal': 29, 'mention': 8, 'add': 16, 'withdraw': 2, 'write': 21, 'question': 43, 'entirely': 4, 'draw': 85, 'place': 143, 'call': 55, 'trapani': 15, 'west': 23, 'coast': 15, 'sicily': 13, 'alike': 9, 'regard': 22, 'phaeacian': 47, 'ithaca': 112, 'scene': 5, 'voyage': 43, 'ulysses': 286, 'easy': 11, 'reach': 114, 'solve': 1, 'periplus': 1, 'island': 102, 'practically': 2, 'lipari': 2, 'strait': 6, 'messina': 3, 'pantellaria': 2, 'poem': 19, 'young': 95, 'woman': 162, 'live': 102, 'introduce': 4, 'nausicaa': 20, 'argument': 2, 'base': 6, 'somewhat': 4, 'startling': 1, 'contention': 2, 'prominently': 3, 'repeatedly': 1, 'italian': 4, 'public': 22, 'appear': 37, 'rejoinder': 4, 'athenaeum': 1, 'january': 2, 'february': 1, 'urge': 11, 'johnian': 1, 'eagle': 12, 'lent': 1, 'october': 1, 'year': 65, 'reply': 48, 'quarter': 11, 'know': 213, 'anxiously': 2, 'endeavour': 1, 'learn': 14, 'existence': 4, 'flaw': 2, 'begin': 117, 'feel': 13, 'confidence': 2, 'exist': 6, 'hear': 170, 'rate': 14, 'moment': 40, 'pretend': 1, 'think': 126, 'scholar': 1, 'generally': 9, 'acquiesce': 1, 'conclusion': 2, 'act': 4, 'little': 36, 'likely': 17, 'gainsay': 2, 'incumbent': 1, 'confine': 1, 'translate': 6, 'reader': 20, 'note': 24, 'find': 175, 'useful': 4, 'especially': 8, 'attention': 8, 'lord': 18, 'grimthorpe': 3, 'kindly': 8, 'allow': 11, 'repeat': 4, 'hope': 44, 'bring': 205, 'outer': 37, 'court': 65, 'house': 420, 'vividly': 1, 'like': 177, 'explain': 14, 'presence': 14, 'man': 682, 'dog': 25, 'accidental': 1, 'observe': 7, 'till': 162, 'develop': 1, 'negative': 1, 'appendix': 4, 'reprint': 2, 'paragraph': 15, 'explanatory': 1, 'plan': 16, 'recommend': 2, 'study': 4, 'iliad': 29, 'give': 215, 'view': 6, 'principle': 2, 'guide': 7, 'need': 23, 'initial': 4, 'liberty': 4, 'poetry': 2, 'involve': 1, 'continual': 3, 'taking': 1, 'right': 68, 'wrong': 17, 'exigency': 1, 'readable': 3, 'thing': 112, 'consider': 17, 'far': 91, 'depart': 9, 'strict': 5, 'construe': 1, 'print': 6, 'messr': 4, 'butcher': 6, 'lang': 6, 'line': 68, 'run': 64, 'tell': 394, 'muse': 9, 'ready': 36, 'wander': 9, 'wide': 9, 'sack': 21, 'sacred': 5, 'citadel': 2, 'troy': 71, 'town': 88, 'see': 211, 'mind': 98, 'yea': 1, 'woe': 4, 'suffer': 31, 'heart': 101, 'deep': 23, 'strive': 1, 'win': 14, 'life': 58, 'return': 127, 'company': 10, 'nay': 2, 'save': 33, 'desire': 19, 'sore': 3, 'blindness': 2, 'perish': 28, 'fool': 15, 'devour': 7, 'oxen': 21, 'helios': 1, 'hyperion': 6, 'god': 283, 'take': 281, 'day': 198, 'goddess': 61, 'daughter': 101, 'zeus': 3, 'whencesoever': 1, 'thou': 4, 'hast': 1, 'thereof': 1, 'declare': 8, 'unto': 1, 'rest': 58, 'flee': 5, 'sheer': 10, 'destruction': 19, 'home': 240, 'escape': 37, 'war': 17, 'sea': 221, 'odysseus': 5, 'crave': 1, 'wife': 109, 'homeward': 11, 'path': 5, 'lady': 4, 'nymph': 22, 'calypso': 36, 'hold': 128, 'fair': 56, 'hollow': 2, 'cave': 50, 'long': 204, 'come': 586, 'course': 35, 'season': 9, 'ordain': 5, 'quit': 7, 'labour': 13, 'pity': 18, 'poseidon': 2, 'rage': 14, 'continually': 6, 'godlike': 1, 'howbeit': 1, 'distant': 9, 'ethiopians': 4, 'ethiopian': 1, 'sunder': 1, 'twain': 1, 'uttermost': 1, 'abide': 4, 'sink': 6, 'rise': 42, 'look': 152, 'receive': 25, 'hecatomb': 16, 'bull': 10, 'ram': 12, 'merry': 5, 'sit': 137, 'feast': 34, 'gather': 33, 'hall': 2, 'olympian': 4, 'father': 254, 'speak': 182, 'bethink': 8, 'noble': 33, 'aegisthus': 29, 'son': 340, 'agamemnon': 38, 'fame': 5, 'oreste': 11, 'slew': 1, 'spake': 2, 'immortal': 47, 'vainly': 3, 'mortal': 26, 'blame': 7, 'evil': 29, 'sorrow': 47, 'late': 9, 'wed': 4, 'atreus': 18, 'kill': 158, 'doom': 10, 'eye': 80, 'warn': 8, 'embassy': 1, 'hermes': 1, 'keen': 5, 'sight': 22, 'slayer': 2, 'argo': 21, 'woo': 11, 'avenge': 13, 'hand': 262, 'soon': 106, 'estate': 26, 'herme': 1, 'prevail': 5, 'good': 293, 'hath': 3, 'pay': 54, 'price': 2, 'grey': 12, 'eyed': 3, 'athene': 1, 'answer': 178, 'say': 566, 'cronide': 1, 'throne': 2, 'high': 48, 'assuredly': 2, 'lie': 125, 'death': 70, 'likewise': 2, 'deed': 21, 'rent': 2, 'wise': 19, 'hapless': 2, 'friend': 99, 'suffereth': 1, 'affliction': 9, 'girt': 3, 'isle': 2, 'navel': 1, 'woodland': 2, 'habitation': 1, 'wizard': 1, 'atlas': 4, 'depth': 2, 'uphold': 2, 'tall': 18, 'pillar': 4, 'earth': 31, 'sky': 9, 'asunder': 2, 'soft': 11, 'guileful': 1, 'tale': 14, 'forgetfulness': 1, 'yearning': 1, 'smoke': 13, 'leap': 2, 'upwards': 5, 'land': 115, 'die': 40, 'thee': 4, 'thine': 1, 'regardeth': 1, 'ship': 310, 'argive': 25, 'free': 22, 'offering': 46, 'sacrifice': 45, 'trojan': 17, 'wherefore': 2, 'wast': 1, 'wroth': 1, 'abound': 6, 'passage': 30, 'borrow': 5, 'wish': 50, 'slightly': 1, 'different': 11, 'type': 4, 'marginal': 2, 'reference': 9, 'mark': 14, 'end': 117, 'hopelessly': 1, 'scholasticise': 1, 'abandon': 2, 'intention': 2, 'management': 2, 'university': 2, 'press': 15, 'great': 193, 'service': 10, 'student': 3, 'greek': 59, 'text': 11, 'iliadic': 10, 'british': 2, 'museum': 2, 'underline': 1, 'refer': 9, 'marked': 3, 'odyssean': 18, 'ought': 18, 'present': 88, 'discuss': 2, 'arisen': 1, 'round': 145, 'wolf': 6, 'time': 151, 'keep': 70, 'demonstrably': 2, 'single': 24, 'neighbourhood': 3, 'presumably': 2, 'person': 39, 'certainly': 6, 'probability': 2, 'b.c.—that': 1, 'writer': 55, 'early': 19, 'familiar': 2, 'freely': 6, 'genuineness': 1, 'impugn': 1, 'admit': 3, 'fail': 13, 'hardly': 20, 'equitably': 5, 'inference': 1, 'common': 8, 'sense': 19, 'identical': 2, 'believe': 20, 'difficulty': 15, 'assign': 2, 'proper': 9, 'value': 8, 'large': 38, 'number': 31, 'continent': 3, 'enjoy': 16, 'considerable': 6, 'reputation': 1, 'furthermore': 10, 'advantage': 5, 'well': 88, 'worth': 6, 'securing': 1, 'puzzle': 9, 'cease': 15, 'discovery': 1, 'arise': 2, 'saturation': 3, 'disappear': 3, 'development': 1, 'understand': 21, 'length': 6, 'briefly': 2, 'consist': 3, 'distinct': 1, 'ask': 94, 'sing': 35, 'opening': 1, 'episode': 3, 'account': 21, 'adventure': 6, 'ix.-xii': 2, 'roughly': 5, 'intermission': 1, 'middle': 27, 'scheme': 14, 'story': 43, 'penelope': 117, 'suitor': 253, 'telemachus': 247, 'pylos': 46, 'continue': 12, 'resume': 3, 'ulysse': 369, 'wake': 19, 'introduction': 2, 'new': 13, 'council': 14, 'beginning': 13, 'remove': 10, 'semblance': 1, 'unity': 1, 'old': 170, 'conceal': 5, 'fact': 14, 'subject': 4, 'spend': 6, 'third': 2, 'singe': 11, 'climax': 1, 'occupy': 3, 'substantially': 1, 'correct': 5, 'lastly': 5, 'unimportant': 1, 'leipsic': 1, 'teubner': 1, 'comma': 1, 'stop': 15, 'recent': 2, 'adhere': 1, 'small': 17, 'matter': 81, 'spirit': 8, 'mere': 4, 'conservatism': 1, 'prefer': 2, 'books': 1, 'capital': 3, 'careful': 4, 'supposition': 1, 'inadvertence': 1, 'determine': 6, 'word': 88, 'july': 1, 'originally': 4, 'simultaneously': 1, 'genesis': 1, 'size': 4, 'page': 15, 'reduce': 3, 'uniform': 2, 'fortunately': 1, 'possible': 13,...
+                </code></pre>
+
+            <h4>TODOs from the Project</h4>
+            <ul>
+                <li>Make a new Code Cell and use Gemini to create a new function called `word_tokenization_normalization` to perform text preprocessing using SpaCy.</li>
+                <li>Make a new Code Cell and use Gemini to create a new function called `create_word_frequency_dict` from the result of the previous task. This function should return a word frequency dictionary.</li>
+                <li>Make a new Code Cell and use Gemini to create a new function called `print_top_words` to print out the result as shown in the original notebook.</li>
+            </ul>
+        </section>
+
+        <div>
+            <a href="project1.html">Back to Resume</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Orion Rice</p>
+    </footer>
+</body>
+</html>
+
